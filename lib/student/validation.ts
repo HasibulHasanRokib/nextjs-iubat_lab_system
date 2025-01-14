@@ -19,3 +19,15 @@ export const studentRegisterSchema = z.object({
 });
 
 export type TStudentRegisterSchema = z.infer<typeof studentRegisterSchema>;
+
+export const studentLoginSchema = z.object({
+  studentId: z.string().min(1, "Required").max(8, "Maximum length 8."),
+  password: z.string().min(4, "Required").max(8, "Maximum length 8."),
+});
+
+export type TStudentLoginSchema = z.infer<typeof studentLoginSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+export type TForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;

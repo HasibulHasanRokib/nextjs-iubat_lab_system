@@ -1,4 +1,3 @@
-import StudentRegisterForm from "@/components/student/studentRegisterForm";
 import {
   Card,
   CardContent,
@@ -7,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import StudentRegisterForm from "./studentRegisterForm";
 
 export default function StudentRegister() {
   return (

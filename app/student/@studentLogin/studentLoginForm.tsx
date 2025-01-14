@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,26 +11,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-const formSchema = z.object({
-  studentId: z.string().min(1, "Required").max(8, "Maximum length 8."),
-  password: z.string().min(4, "Required").max(8, "Maximum length 8."),
-});
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { studentLogin } from "@/app/student/@studentLogin/action";
+import SuccessMessage from "@/components/successMessage";
+import ErrorMessage from "@/components/errorMessage";
+import {
+  studentLoginSchema,
+  TStudentLoginSchema,
+} from "@/lib/student/validation";
 
 export default function StudentLoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<TStudentLoginSchema>({
+    resolver: zodResolver(studentLoginSchema),
     defaultValues: {
       studentId: "",
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+
+  const queryClient = useQueryClient();
+
+  const { mutate, data, isPending } = useMutation({
+    mutationKey: ["student-login/logout"],
+    mutationFn: studentLogin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["active-students"] });
+    },
+  });
+
+  function onSubmit(values: TStudentLoginSchema) {
+    mutate(values);
+    form.reset();
   }
 
   return (
-    <div>
+    <div className="space-y-3">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-x-2">
           <FormField
@@ -62,11 +76,18 @@ export default function StudentLoginForm() {
               </FormItem>
             )}
           />
-          <div className="">
-            <Button type="submit">Login / Logout</Button>
+          <div>
+            <Button disabled={isPending} type="submit">
+              {isPending ? "Loading..." : "Login / Logout"}
+            </Button>
           </div>
         </form>
       </Form>
+
+      <div className="text-center">
+        {data && data.success ? <SuccessMessage message={data.success} /> : ""}
+        {data && data.error ? <ErrorMessage message={data.error} /> : ""}
+      </div>
     </div>
   );
 }
