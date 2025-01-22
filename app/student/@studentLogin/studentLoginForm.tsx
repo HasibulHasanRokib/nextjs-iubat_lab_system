@@ -19,8 +19,10 @@ import {
   studentLoginSchema,
   TStudentLoginSchema,
 } from "@/lib/student/validation";
+import { useState } from "react";
 
 export default function StudentLoginForm() {
+  const [showMessage, setShowMessage] = useState<boolean>(false);
   const form = useForm<TStudentLoginSchema>({
     resolver: zodResolver(studentLoginSchema),
     defaultValues: {
@@ -36,6 +38,10 @@ export default function StudentLoginForm() {
     mutationFn: studentLogin,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["active-students"] });
+      setShowMessage(true);
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
     },
   });
 
@@ -85,7 +91,11 @@ export default function StudentLoginForm() {
       </Form>
 
       <div className="text-center">
-        {data && data.success ? <SuccessMessage message={data.success} /> : ""}
+        {showMessage && data && data.success ? (
+          <SuccessMessage message={data.success} />
+        ) : (
+          ""
+        )}
         {data && data.error ? <ErrorMessage message={data.error} /> : ""}
       </div>
     </div>

@@ -28,8 +28,11 @@ import { useMutation } from "@tanstack/react-query";
 import { registration } from "@/app/student/@studentRegister/action";
 import ErrorMessage from "@/components/errorMessage";
 import SuccessMessage from "@/components/successMessage";
+import { useState } from "react";
 
 export default function StudentRegisterForm() {
+  const [showMessage, setShowMessage] = useState(false);
+
   const form = useForm<TStudentRegisterSchema>({
     resolver: zodResolver(studentRegisterSchema),
     defaultValues: {
@@ -46,6 +49,12 @@ export default function StudentRegisterForm() {
   const { mutate, data, isPending } = useMutation({
     mutationKey: ["student-registration"],
     mutationFn: registration,
+    onSuccess: () => {
+      setShowMessage(true);
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
+    },
   });
 
   const submit = (values: TStudentRegisterSchema) => {
@@ -56,7 +65,11 @@ export default function StudentRegisterForm() {
   return (
     <>
       {data && data.error ? <ErrorMessage message={data.error} /> : ""}
-      {data && data.success ? <SuccessMessage message={data.success} /> : ""}
+      {showMessage && data && data.success ? (
+        <SuccessMessage message={data.success} />
+      ) : (
+        ""
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(submit)} className="space-y-3">
           <FormField

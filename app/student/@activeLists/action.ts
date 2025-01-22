@@ -8,8 +8,9 @@ export async function activeStudentList() {
       where: {
         isLoggedIn: true,
       },
+
       orderBy: {
-        loginTime: "desc",
+        lastLogin: "desc",
       },
     });
     return students;

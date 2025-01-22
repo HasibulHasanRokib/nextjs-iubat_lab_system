@@ -29,12 +29,22 @@ export async function studentLogin(values: TStudentLoginSchema) {
     if (!passOk) return { error: "Invalid password!" };
 
     if (studentExist.isLoggedIn) {
-      await db.student.update({
+      const logoutStudent = await db.student.update({
         where: {
           studentId: studentExist.studentId,
         },
         data: {
           isLoggedIn: false,
+          lastLogout: new Date(),
+        },
+      });
+
+      await db.attendance.updateMany({
+        where: {
+          studentId: logoutStudent.studentId,
+        },
+        data: {
+          logoutTime: new Date(),
         },
       });
       return { success: "Logout successful." };
@@ -45,13 +55,21 @@ export async function studentLogin(values: TStudentLoginSchema) {
         },
         data: {
           isLoggedIn: true,
-          loginTime: new Date(),
+          lastLogin: new Date(),
         },
       });
+
+      await db.attendance.create({
+        data: {
+          loginTime: new Date(),
+          studentId: studentExist.studentId,
+        },
+      });
+
       return { success: "Login successful." };
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { error: "Something went wrong!" };
   }
 }

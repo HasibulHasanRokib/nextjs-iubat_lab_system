@@ -12,8 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import Avatar from "@/public/images/avatar.png";
 
 export default function DataTable() {
   const { data } = useQuery({
@@ -38,17 +36,11 @@ export default function DataTable() {
             data.map((student, index) => (
               <TableRow key={student.studentId}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell className="flex items-center space-x-2">
-                  <div className="relative h-10 w-10 rounded-full object-cover">
-                    <Image src={Avatar} alt="avatar" fill />
-                  </div>
-
-                  <p className="capitalize">{student.fullName}</p>
-                </TableCell>
+                <TableCell>{student.fullName}</TableCell>
                 <TableCell>{student.studentId}</TableCell>
                 <TableCell>{student.program}</TableCell>
                 <TableCell className="text-right">
-                  {student.loginTime?.toLocaleTimeString()}
+                  {student.lastLogin?.toLocaleTimeString()}
                 </TableCell>
               </TableRow>
             ))}

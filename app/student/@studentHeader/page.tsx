@@ -34,7 +34,7 @@ export default async function Header() {
               className="text-gray-800 underline underline-offset-2"
               href={"#"}
             >
-              Sign out
+              System Logout
             </Link>
           </span>
           <DateAndTime />

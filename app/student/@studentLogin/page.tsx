@@ -14,7 +14,7 @@ export default function StudentLogin() {
     <Card>
       <CardHeader>
         <CardTitle>Student Login & Logout</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-center">
           Note: You have to logout when you will leave the lab. Otherwise you
           will be blocked.
         </CardDescription>

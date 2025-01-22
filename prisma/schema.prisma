@@ -8,19 +8,32 @@ datasource db {
 }
 
 model Student {
-  id          String    @id @default(cuid())
-  studentId   String    @unique
+  id          String       @id @default(cuid())
+  studentId   String       @unique
   program     String
   fullName    String
   gender      String
-  email       String    @unique
+  email       String       @unique
   phoneNumber String
   password    String
-  isLoggedIn  Boolean?  @default(false)
-  loginTime   DateTime?
-  isBanned    Boolean?  @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isLoggedIn  Boolean?     @default(false)
+  lastLogin   DateTime?
+  lastLogout  DateTime?
+  isBanned    Boolean?     @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Attendance  Attendance[]
 
   @@map("students")
+}
+
+model Attendance {
+  id         String    @id @default(cuid())
+  date       DateTime  @default(now())
+  loginTime  DateTime?
+  logoutTime DateTime?
+  studentId  String
+  student    Student?  @relation(fields: [studentId], references: [studentId])
+
+  @@map("attendances")
 }
